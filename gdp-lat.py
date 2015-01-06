@@ -11,21 +11,12 @@ import matplotlib.pyplot as plt
 def lat_gdp_exp():
     """Scrapes latitude and gdp data, runs linear regression and plots the data"""
 
-    #get data
-    gdp = make_gdp_frame()
-    n_lat = make_lat_frame(is_north=True)
-    s_lat = make_lat_frame(is_north=False)
+    lat_gdp = make_gdp_lat_frame()
+    #lat_gdp.to_csv("data/lat_gdp.csv")
 
-    #create a single DataFrame with north and south lats
-    lat = pd.merge(n_lat, s_lat, on="country")
-
-    #get the abs val of the mean of the lats and put it in a new DataFrame
-    mean_lat = lat[["n_lat","s_lat"]].mean(1).abs()
-    mean_lat = pd.DataFrame({"country":lat["country"],
-                             "latitude":mean_lat})
-    lat_gdp = pd.merge(mean_lat, gdp, on="country")
-    print lat_gdp.describe()
-
+    #if make_gdp_lat_frame() doesn't work, then you can read
+    #from a cached csv file
+    #lat_gdp = pd.read_csv("data/lat_gdp.csv")
 
     #do linear regression, using latitude to predict gdp
     X = lat_gdp[["latitude"]]
@@ -43,6 +34,24 @@ def lat_gdp_exp():
     plt.xlabel("| latitude |")
     plt.ylabel("gdp")
     plt.savefig("paper/scatter.pdf")
+
+def make_gdp_lat_frame():
+    """Makes a DataFrame where the rows are countries, lats, and gdps"""
+
+    #get data
+    gdp = make_gdp_frame()
+    n_lat = make_lat_frame(is_north=True)
+    s_lat = make_lat_frame(is_north=False)
+
+    #create a single DataFrame with north and south lats
+    lat = pd.merge(n_lat, s_lat, on="country")
+
+    #get the abs val of the mean of the lats and put it in a new DataFrame
+    mean_lat = lat[["n_lat","s_lat"]].mean(1).abs()
+    mean_lat = pd.DataFrame({"country":lat["country"],
+                             "latitude":mean_lat})
+    lat_gdp = pd.merge(mean_lat, gdp, on="country")
+    return lat_gdp
     
 def make_gdp_frame():
     """Make a DataFrame with country and gdp columns using data from Wikipedia"""
