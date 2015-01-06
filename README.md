@@ -40,5 +40,5 @@ pdflatex document.tex
 
 Warning
 =========
-This script works as of 12/24/2014, but is likely to break in the future
-due to changes in the web pages being used as a data source.
+The web scraping part of the script is likely to break in the future, so 
+I've cached the cleaned data in data/lat_gdp.csv.
